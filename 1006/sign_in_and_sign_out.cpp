@@ -1,7 +1,5 @@
 #include <utility>
-#include <typeinfo>
 #include <cstdio>
-#include <map>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -48,35 +46,34 @@ int main ()
         std::scanf("%ud", &time_value);
         GetInTime(GetSchedule(s)).hour = time_value;
         GetInTime(GetSchedule(s)).unformattime = time_value * 10000;
-        
+
         std::getchar();
-        
+
         std::scanf("%ud", &time_value);
         GetInTime(GetSchedule(s)).minute = time_value;
         GetInTime(GetSchedule(s)).unformattime += time_value * 100;
-        
+
         std::getchar();
         std::scanf("%ud", &time_value);
         GetInTime(GetSchedule(s)).second = time_value;
         GetInTime(GetSchedule(s)).unformattime += time_value;
-        
+
         // get out time 
         std::scanf("%ud", &time_value);
         GetOutTime(GetSchedule(s)).hour = time_value;
         GetOutTime(GetSchedule(s)).unformattime = time_value * 10000;
         std::getchar();
-        
+
         std::scanf("%ud", &time_value);
         GetOutTime(GetSchedule(s)).minute = time_value;
         GetOutTime(GetSchedule(s)).unformattime += time_value * 100;
         std::getchar();
-        
+
         std::scanf("%ud", &time_value);
         GetOutTime(GetSchedule(s)).second = time_value;
         GetOutTime(GetSchedule(s)).unformattime += time_value;
         schedule_table[i] = s;
     }
-    
 
     std::vector<std::string> ret;
 
@@ -84,15 +81,15 @@ int main ()
     std::pair<std::string, unsigned> max;
 
     min.first =  "";
-    min.second = 0;
-    max.first = min.first;
     min.second = 235959;
+    max.first = min.first;
+    max.second = 0;
     for(size_t i = 0; i < schedule_number; i++)
     {
         std::string s =  GetHomeName(schedule_table[i]);
         unsigned t1 = GetInTime(GetSchedule(schedule_table[i])).unformattime;
         unsigned t2 = GetOutTime(GetSchedule(schedule_table[i])).unformattime;
-        
+
         if(t1 <= min.second)
         {
             min.second = t1;
