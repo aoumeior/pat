@@ -63,7 +63,6 @@ int main()
             continue;
         }
 
-
         if (it->second.cme_max.first == 'E')
         {
             for (auto it1 : score_table)
@@ -115,7 +114,6 @@ int main()
                 }
             }
         }
-
 
         std::cout << rank << ' ' << it->second.cme_max.first << std::endl;
         rank = 1;
