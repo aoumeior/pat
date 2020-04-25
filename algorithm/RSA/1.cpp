@@ -1,9 +1,5 @@
 #include <iostream>
 
-long prime_P = 61;
-long prime_Q = 53;
-
-
 int extended_euclidean(int y, int x)
 {
 	int t = 0, newt = 1;
@@ -37,14 +33,18 @@ int extended_euclidean(int y, int x)
 		return -1245455;
 }
 
+long prime_P = 61;
+long prime_Q = 53;
+
 int main()
 {
-    auto t = prime_P * prime_Q;
-    long Euler = (prime_P - 1) * (prime_Q - 1);
+    auto n = prime_P * prime_Q;  //3233
+    
+	long Euler = (prime_P - 1) * (prime_Q - 1); // 3120
 
     long e = 17;
 
-    auto mm = extended_euclidean(17, 3120);
+    auto d = extended_euclidean(17, 3120); // 2753
 
-    std::cout << mm << std::endl;
+    std::cout << d << std::endl;
 }
