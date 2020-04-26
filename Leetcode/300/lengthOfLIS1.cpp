@@ -4,7 +4,7 @@
 
 class Solution {
 public:
-    int lengthOfLIS(vector<int>& nums) {
+    int lengthOfLIS(std::vector<int>& nums) {
         int len = 1, n = (int)nums.size();
         if (n == 0) return 0;
         std::vector<int> d(n + 1, 0);
