@@ -1,5 +1,7 @@
 #include <vector>
 #include <limits>
+#include <cmath>
+#include <algorithm>
 
 class Solution
 {
@@ -8,7 +10,7 @@ public:
     {
         if (amount == 0)
         {
-            ans = min(ans, count);
+            ans = std::min(ans, count);
             return;
         }
         if (c_index == coins.size())
@@ -20,13 +22,13 @@ public:
         }
     }
 
-    int coinChange(vector<int> &coins, int amount)
+    int coinChange(std::vector<int> &coins, int amount)
     {
         if (amount == 0)
             return 0;
-        sort(coins.rbegin(), coins.rend());
-        int ans = INT_MAX;
+        std::sort(coins.rbegin(), coins.rend());
+        int ans = std::numeric_limits<int>::max();
         coinChange(coins, amount, 0, 0, ans);
-        return ans == INT_MAX ? -1 : ans;
+        return ans == std::numeric_limits<int>::max() ? -1 : ans;
     }
 };
