@@ -2,39 +2,64 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <bit>
 #include <bitset>
 #include <string>
 
 using edge_set = std::vector<uint16_t>;
 using adjacency_list = std::vector<edge_set>;
 
-class dfs {
+class dfs
+{
 public:
     dfs(const adjacency_list &aj)
-    : aj_(aj),
-    vb_(false, aj_.size())
+        : aj_(aj),
+          vb_(aj.size(), false)
     {
-    } 
+    }
     void operator()(int n)
     {
         vb_[n] = true;
-        for (int i = 1; i <= aj_.size(); i++)
+        for (const int &i : aj_[n])
         {
-            if (vb_[i] == false && aj_[n][i] == 1)
+            if (vb_[i] == false)
             {
-                operator ()(i);
+                operator()(i);
             }
         }
     }
+
+    size_t get_false()
+    {
+        int count = 0;
+        std::for_each(vb_.begin(), vb_.end(), [&count](bool t) {
+            if (t == false)
+            {
+                count++;
+            }
+        });
+        return count;
+    }
+
+    bool get_vb_n(size_t n) const
+    {
+        return vb_[n];
+    }
+    void set_point_visit_open(size_t n) const
+    {
+        vb_[n] = true;
+    }
+    void set_point_visit_close(size_t n) const
+    {
+        vb_[n] = false;
+    }
     void reset() const
     {
-        vb_ = (std::vector<bool>(false, aj_.size()));
+        vb_ = (std::vector<bool>(aj_.size(), false));
     }
-private:
-const adjacency_list &aj_;
-mutable std::vector<bool> vb_;
 
+private:
+    const adjacency_list &aj_;
+    mutable std::vector<bool> vb_;
 };
 
 int main()
@@ -55,12 +80,24 @@ int main()
         al[b - 1].push_back(a - 1);
     }
 
+    dfs ds{al};
     for (size_t i = 0; i < be_concerned_city; i++)
     {
-        uint16_t concerned_id, fix_highways = 0;
+        uint16_t concerned_id;
         std::cin >> concerned_id;
+        uint16_t cnt = 0;
 
-        dfs ds {al};
+        ds.set_point_visit_open(concerned_id - 1);
+        for (size_t j = 0; j < city_number; j++)
+        {
+            if (ds.get_vb_n(j) == false)
+            {
+                ds(j);
+                cnt++;
+            }
+        }
+        printf("%d\n", cnt - 1);
+        ds.reset();
     }
     return 0;
 }
