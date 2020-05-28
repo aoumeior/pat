@@ -23,8 +23,12 @@ int main(int argc, char const *argv[])
 
     int sum = std::accumulate(v.begin(), v.end(), 0);
 
-    int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
+    int product = std::accumulate(std::move_iterator<std::vector<int>::iterator>(v.begin()), std::move_iterator<std::vector<int>::iterator>(v.end()), 1, std::multiplies<int>());
 
     std::cout << product;
+
+    std::for_each(v.begin(), v.end(), [](int t) -> void {
+        std::cout << '"' << t << '"';
+    });
     return 0;
 }
