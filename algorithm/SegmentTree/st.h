@@ -51,27 +51,27 @@ void segment_tree_init(struct SegmentTree **st, CampareablePoint source, int32_t
     assert(length > 0);
     assert(*st == NULL);
     assert(sizeof(CampareablePoint) == sizeof(struct SegmentTree *));
-    *st = __segment_tree_build(source, 0, length - 1);
+    (*st) = __segment_tree_build(source, 0, length - 1);
 }
 
 void segment_tree_update(struct SegmentTree *st, uint32_t l, uint32_t r, char tag, int value)
 {
     // 一个最基本的认识在于 l与r小于st最大的区间
-    st->__left > l &&st->__right < r ? l = st->__left, r = st->__right : (void *)0;
+    st->__left > l &&st->__right < r ? (l = st->__left), (r = st->__right) : (void *)0;
 
     // 没有交集
-    if ((st->__left - l) * (st->__right - r) > 0)
+
+    int t = ((st->__left - l) * (st->__right - r));
+    if (t > 0)
     {
         return;
     }
 
     st->__sum += (r - l + 1) * value;
     // 包含关系
-    if (r == st->__left && r == st->__right)
+    if (l == st->__left && r == st->__right)
     {
         st->lazy += value;
-        st->__sum += (r - l + 1) * value;
-
         return;
     }
 
@@ -94,11 +94,6 @@ void segment_tree_update(struct SegmentTree *st, uint32_t l, uint32_t r, char ta
     // 此时说明被夹的区间在右半边
     if (st->left->__right < l)
     {
-        if (st->lazy != 0)
-        {
-            st->left->lazy += st->lazy;
-            st->lazy = 0;
-        }
         segment_tree_update(st->right, l, r, 'a', value);
         return;
     }
@@ -106,15 +101,17 @@ void segment_tree_update(struct SegmentTree *st, uint32_t l, uint32_t r, char ta
     // 这种情况就肯定会出现了 包含了左右区间；
     //我们做个断言
     assert(st->right->__left < r && st->left->__right > l);
-    segment_tree_update(st->right, r, st->right->__right, 'a', value);
-    segment_tree_update(st->left, st->left->__right, l, 'a', value);
+    segment_tree_update(st->right, r, l, 'a', value);
+    segment_tree_update(st->left, r, l, 'a', value);
 }
 
 int segment_tree_query(struct SegmentTree *st, uint32_t l, uint32_t r)
 {
-    st->__left > l &&st->__right < r ? l = st->__left, r = st->__right : (void *)0;
+    ((st->__left > l) && (st->__right < r)) ? (l = st->__left), (r = st->__right) : (void *)0;
     // 没有交集
-    if ((st->__left - l) * (st->__right - r) > 0)
+
+    int t = (st->__left - l) * (st->__right - r);
+    if (t > 0)
     {
         return 0;
     }
@@ -133,16 +130,8 @@ int segment_tree_query(struct SegmentTree *st, uint32_t l, uint32_t r)
         st->lazy = 0;
     }
 
-    int result1 = segment_tree_query(st->left, l, st->__right);
-    int result2 = segment_tree_query(st->left, st->__left, r);
+    int result1 = segment_tree_query(st->left, l, r);
+    int result2 = segment_tree_query(st->right, l, r);
 
     return result1 + result2;
-}
-int main()
-{
-
-    struct SegmentTree *st = NULL;
-    int c[] = {1, 2, 3, 4, 5, 6};
-
-    segment_tree_init(&st, (void *)c, 6);
 }
