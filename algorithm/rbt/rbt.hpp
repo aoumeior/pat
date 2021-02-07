@@ -40,6 +40,10 @@ public:
     SelfPointer __right;
 
 public:
+    const bool isRoot() const noexcept
+    {
+        return this->__parent == nullptr;
+    }
     const bool isRightNode() const noexcept
     {
         assert(__parent != nullptr);
@@ -221,12 +225,13 @@ public:
         });
 
         NodePoinerType newNode = new NodeType(node, key_, value_);
-        node->__key > key_ ? node->left = newNode : node->__right = newNode;
+        node->__key > key_ ? node->__left = newNode : node->__right = newNode;
 
-        assert(node->getCurrentNodeColor() != Node::NodeColor::UNKNOW);
+        assert(node->getCurrentNodeColor() != NodeType::NodeColor::UNKNOW);
 
-        if (node->getCurrentNodeColor() == Node::NodeColor::BLOCK)
+        if (node->getCurrentNodeColor() == NodeType::NodeColor::BLOCK)
         {
+            this->__size++;
             // 情况二就此结束了， 父节点为黑节点，子节点为红节点，整个“黑高” 未增加，满足红黑树性质。
             return;
         }
@@ -235,28 +240,34 @@ public:
 
         // 情况三：
         // N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。
-        if (node->getBrothersNodeColor() == Node::NodeColor::RED)
+        if (node->getBrothersNodeColor() == NodeType::NodeColor::RED)
         {
             node->reverseNodeColor();
             node->getBrotherNode()->reverseNodeColor();
-            node->__parent->reverseNodeColor();
 
+            // 如果node的父节点根节点则不会变色，如何判断根节点是由于根节点的父节点是 nullptr 且整颗树只有此满足该条件。
+            // 同时判断该节点是否为根也是循环的必要条件。
             node = node->__parent;
-            if (node->__parent->getCurrentNodeColor() == Node::NodeColor::BLOCK)
+            if (node->isRoot())
             {
                 return;
             }
+            // 非根节点反转为红色， 原节点一定是黑色。
+            node->reverseNodeColor();
 
-            while (node->__parent->getCurrentNodeColor() != Node::NodeColor::BLOCK)
+            // 避免级联红色
+            while (node->__parent->getCurrentNodeColor() != NodeType::NodeColor::BLOCK)
             {
                 node->getBrotherNode()->reverseNodeColor();
-                node->__parent->reverseNodeColor();
                 node = node->__parent;
-                if (node->__parent == nullptr)
+                if (node->isRoot())
                 {
                     return;
                 }
+                node->reverseNodeColor();
             }
+
+            return;
         }
 
         // 情况四：

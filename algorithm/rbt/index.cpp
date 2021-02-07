@@ -14,6 +14,9 @@ int main()
     Node<int, std::string> node;
 
     __Tree<int, int> te;
-    te.insert(1, 3);
-
+    te.insert(50, 3);
+    te.insert(1, 4);
+    te.insert(100, 4);
+    te.insert(75, 4);
+    te.insert(125, 4);
 }
